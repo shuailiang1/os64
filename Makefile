@@ -10,8 +10,8 @@ boot.bin: code/bootloader/boot.asm
 loader.bin: code/bootloader/loader.asm code/bootloader/fat12.inc
 	nasm code/bootloader/loader.asm -o out/loader.bin
 
-system:	head.o main.o 
-	ld -b elf64-x86-64 -o out/system out/head.o out/main.o -T code/kernel/Kernel.lds 
+system:	head.o main.o printk.o
+	ld -b elf64-x86-64 -z muldefs -o out/system out/head.o out/main.o out/printk.o -T code/kernel/Kernel.lds 
 
 main.o:	code/kernel/main.c
 	gcc  -mcmodel=large -fno-builtin -m64 -c code/kernel/main.c -o out/main.o
@@ -19,6 +19,9 @@ main.o:	code/kernel/main.c
 head.o:	code/kernel/head.S
 	gcc -E  code/kernel/head.S > out/head.s
 	as --64 -o out/head.o out/head.s
+
+printk.o: code/kernel/printk.c code/kernel/lib.h 
+	gcc -static  -mcmodel=large -fno-builtin -m64 -c code/kernel/printk.c -fno-stack-protector -o out/printk.o
 
 
 clean:
