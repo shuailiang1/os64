@@ -49,6 +49,7 @@ void Start_Kernel(void)
 		*((char *)addr+3)=(char)0x00;	
 		addr +=1;	
 	}
+	int a = 1/0;
 
 	color_printk(YELLOW,BLACK,"kernel print character success！\n");
 
